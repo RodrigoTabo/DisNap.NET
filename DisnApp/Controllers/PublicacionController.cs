@@ -69,11 +69,11 @@ namespace DisnApp.Controllers
                         FechaSubida = DateTime.Now
                     };
 
-                   await _context.Publicaciones.AddAsync(nueva);
-                   await _context.SaveChangesAsync();
+                    await _context.Publicaciones.AddAsync(nueva);
+                    await _context.SaveChangesAsync();
                 }
 
-                    return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
@@ -120,9 +120,9 @@ namespace DisnApp.Controllers
 
                 if (publicacion == null)
                     return NotFound();
-               
+
                 var usuarioId = _userManager.GetUserId(User);
-                
+
                 if (publicacion.UsuarioId != usuarioId)
                     return Forbid();
 
@@ -140,7 +140,7 @@ namespace DisnApp.Controllers
         [HttpPost]
         [Authorize]
         [AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Like (int id)
+        public async Task<IActionResult> Like(int id)
         {
             var usuarioId = _userManager.GetUserId(User);
             var likeExistente = await _context.PublicacionLikes
@@ -164,6 +164,48 @@ namespace DisnApp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> Comentar(int id, string contenido)
+        {
+            var usuarioId = _userManager.GetUserId(User);
+
+            try
+            {
+                var nuevoComentario = new Comentario
+                {
+                    PublicacionId = id,
+                    UsuarioId = usuarioId,
+                    Contenido = contenido,
+                    FechaComentario = DateTime.Now
+                };
+
+                await _context.Comentarios.AddAsync(nuevoComentario);
+                await _context.SaveChangesAsync();
+
+                var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+                if (isAjax)
+                {
+                    var comentarios = await _context.Comentarios
+                        .Where(c => c.PublicacionId == id)
+                        .Include(c => c.Usuario)
+                        .OrderByDescending(c => c.FechaComentario)
+                        .ToListAsync();
+
+                    return PartialView("_CommentsList", comentarios);
+                }
+
+                return RedirectToAction("Details", new { id });
+
+            }
+            catch (Exception ex)
+            {
+                return View("Index", "Home");
+            }
+
+
+        }
 
     }
 }
