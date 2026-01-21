@@ -29,9 +29,18 @@ namespace DisnApp.Controllers
         }
 
         // GET: PublicacionController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
+            var publicacion = await _context.Publicaciones
+                .Include(p => p.Usuario)
+                .Include(p => p.Likes)
+                .Include(p => p.Comentarios).ThenInclude(c => c.Usuario)
+                .FirstOrDefaultAsync(p => p.Id == id && !p.Eliminada);
+
+            if (publicacion == null) return NotFound();
+
+            return PartialView("_Details", publicacion);
         }
 
         // GET: PublicacionController/Create

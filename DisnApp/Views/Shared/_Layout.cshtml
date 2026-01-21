@@ -33,6 +33,14 @@
                 </div>
                 <partial name="_LoginPartial"></partial>
                 <partial name="~/Views/Publicacion/_Create.cshtml" model="new DisnApp.ViewModel.CrearPublicacionVM()" />
+                <!-- Modal contenedor (vacío) -->
+                <div class="modal fade" id="PublicacionModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content modal-content-instagram shadow-lg" id="PublicacionModalContent">
+                            <div class="p-4 text-center">Cargando...</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
@@ -49,8 +57,22 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        const modalEl = document.getElementById('PublicacionModal');
+
+        modalEl.addEventListener('show.bs.modal', async (event) => {
+          const btn = event.relatedTarget;
+          const id = btn.getAttribute('data-post-id'); // <-- ahora sí existe
+
+          const content = document.getElementById('PublicacionModalContent');
+          content.innerHTML = `<div class="p-4 text-center">Cargando...</div>`;
+
+          const res = await fetch(`/Publicacion/Details?id=${id}`);
+          content.innerHTML = await res.text();
+        });
+    </script>
 </body>
+
 </html>
