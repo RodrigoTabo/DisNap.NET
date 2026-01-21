@@ -1,0 +1,187 @@
+﻿@model DisnApp.Models.Usuario
+
+
+<main class="container mt-4 profile-page">
+    <div class="profile-wrap">
+
+        <!-- HEADER -->
+        <header class="row mb-5 align-items-start">
+            <!-- Avatar -->
+            <div class="col-4 d-flex justify-content-center">
+                <div class="profile-image-container p-1 border border-3 rounded-circle d-flex align-items-center justify-content-center">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKfXT6RT6YYfXo9Bwl8DcQfhZ_cjNET89cwNSuQsovkacbuvXGi0jRYs7Fzy91NU3ScQt-C4O7gG7t2Ihp1HJGwqkbZaDNvtBc1afPnEccu0h_Z_hsb2xYfRsqDgeoPgMdOske_TpkNdbbFDg_4X49TcsUuDJWlAI4dHe8nj-C7eSZkhyQMlrHWXTswQXTHstGrpERyIJP1-LVe57aSK2REozLQZ5tx0DRn1Cj0UjT0uKIokbwgZeeFc5oVWqGZzjg8_d76tsqANwe"
+                         alt="Profile Picture"
+                         class="rounded-circle w-100 h-100 border shadow-sm"
+                         style="object-fit: cover;" />
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="col-8">
+                <!-- Username + actions -->
+                <div class="d-flex flex-column flex-md-row align-items-md-center gap-3 mb-4">
+                    <h2 class="h4 mb-0 fw-light">@Model.Email</h2>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-edit btn-sm px-3" type="button">Editar Perfil</button>
+                        <button class="btn btn-link text-dark p-0" type="button" aria-label="Configuración">
+                            <span class="material-symbols-outlined">Setting</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Desktop stats -->
+                <div class="d-none d-md-flex gap-4 mb-4">
+                    <div class="stats-text"><span class="fw-bold">@Model.Publicaciones.Count</span> publicaciones</div>
+                    <div class="stats-text"><span class="fw-bold">@Model.Seguidores.Count</span> seguidores</div>
+                    <div class="stats-text"><span class="fw-bold">@Model.Siguiendo.Count</span> siguiendo</div>
+                </div>
+
+                <!-- Bio -->
+                <div class="bio">
+                    <p class="fw-bold mb-1">@Model.Nombre @Model.Apellido</p>
+                    <p class="mb-1">
+                        Digital Product Designer 🎨<br />
+                        Creando experiencias visuales modernas.<br />
+                        📍 Barcelona, Spain
+                    </p>
+                    <a class="text-decoration-none fw-bold" href="#" style="color: #00376b;">
+                        linktree.com/alexmarin
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile stats -->
+        <section class="d-md-none row border-top py-3 text-center" aria-label="Estadísticas del perfil">
+            <div class="col-4">
+                <div class="fw-bold">120</div>
+                <div class="text-muted small">publicaciones</div>
+            </div>
+            <div class="col-4">
+                <div class="fw-bold">4.5K</div>
+                <div class="text-muted small">seguidores</div>
+            </div>
+            <div class="col-4">
+                <div class="fw-bold">342</div>
+                <div class="text-muted small">siguiendo</div>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs justify-content-center border-0 border-top" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active d-flex align-items-center gap-1"
+                        id="posts-tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab">
+                    <span class="material-symbols-outlined fs-6">grid_on</span>
+                    PUBLICACIONES
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab content -->
+        <div class="tab-content pt-4" id="profileTabsContent">
+            <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="posts-tab">
+
+                <div class="row g-4">
+                    @if (Model?.Publicaciones != null && Model.Publicaciones.Any())
+                    {
+                        foreach (var item in Model.Publicaciones)
+                        {
+                            <div class="col-4">
+                                <div class="ratio ratio-1x1 bg-light">
+                                    <img src="@item.UrlImagen" alt="Post @item.Id" class="post-image" />
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-muted text-center py-5">
+                            No hay publicaciones todavía.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+
+
+<!-- Opcional: mové esto a tu CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+<style>
+    body {
+        background-color: #fafafa;
+    }
+
+    .navbar {
+        background-color: #ffffff;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .profile-image-container {
+        width: 150px;
+        height: 150px;
+    }
+
+    .nav-tabs .nav-link {
+        color: #8e8e8e;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        padding-top: 1rem;
+        border: none;
+        border-top: 1px solid transparent;
+        margin-top: -1px;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: #212529;
+            border-top: 1px solid #212529;
+            background: none;
+        }
+
+    .post-image {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+    .material-symbols-outlined {
+        vertical-align: middle;
+        font-size: 24px;
+    }
+
+    .btn-edit {
+        background-color: #efefef;
+        border: none;
+        color: #000;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+        .btn-edit:hover {
+            background-color: #dbdbdb;
+        }
+
+    .stats-text {
+        font-size: 1rem;
+    }
+
+    footer a {
+        color: #8e8e8e;
+        text-decoration: none;
+        font-size: 0.75rem;
+    }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+</style>

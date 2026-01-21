@@ -15,7 +15,7 @@ namespace DisnApp.Data
         }
 
 
-
+        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Conversacion> Conversaciones { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
         public DbSet<ConversacionUsuario> ConversacionUsuarios { get; set; }

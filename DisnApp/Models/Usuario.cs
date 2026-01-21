@@ -13,7 +13,7 @@ namespace DisnApp.Models
         [Required]
         public DateTime FechaRegistro { get; set; }
 
-        public List<Publicacion> Publicaciones { get; set; } = new();
+        public List<Publicacion>? Publicaciones { get; set; } = new();
         public List<Comentario> Comentarios { get; set; } = new();
         public List<PublicacionLike> Likes { get; set; } = new();
 
