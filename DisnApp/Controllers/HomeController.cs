@@ -1,8 +1,9 @@
-using System.Diagnostics;
 using DisnApp.Data;
 using DisnApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace DisnApp.Controllers
 {
@@ -10,10 +11,13 @@ namespace DisnApp.Controllers
     {
 
         private readonly RedDbContext _context;
+        private readonly UserManager<Usuario> _userManager;
 
-        public HomeController(RedDbContext context)
+        public HomeController(RedDbContext context, UserManager<Usuario> userManager)
         {
             _context = context;
+            _userManager = userManager;
+
         }
 
         public async Task<IActionResult> Index()
@@ -23,8 +27,11 @@ namespace DisnApp.Controllers
                 .Include(p => p.Usuario)
                 .Include(p => p.Likes)
                 .Include(p => p.Comentarios)
+                .Where(p => !p.Eliminada)
                 .OrderByDescending(p => p.FechaSubida)
                 .ToListAsync();
+
+            ViewBag.CurrentUserId = _userManager.GetUserId(User);
 
             return View(publicacion);
         }

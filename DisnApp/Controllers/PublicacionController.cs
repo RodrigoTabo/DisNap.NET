@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace DisnApp.Controllers
 {
@@ -42,7 +45,7 @@ namespace DisnApp.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CrearPublicacionVM vm)
+        public async Task<ActionResult> Create(CrearPublicacionVM vm)
         {
             try
             {
@@ -57,8 +60,8 @@ namespace DisnApp.Controllers
                         FechaSubida = DateTime.Now
                     };
 
-                    _context.Publicaciones.Add(nueva);
-                    _context.SaveChanges();
+                   await _context.Publicaciones.AddAsync(nueva);
+                   await _context.SaveChangesAsync();
                 }
 
                     return RedirectToAction("Index", "Home");
@@ -97,17 +100,31 @@ namespace DisnApp.Controllers
         }
 
         // POST: PublicacionController/Delete/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> Delete(int id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var publicacion = await _context.Publicaciones.FirstOrDefaultAsync(p => p.Id == id);
+
+                if (publicacion == null)
+                    return NotFound();
+               
+                var usuarioId = _userManager.GetUserId(User);
+                
+                if (publicacion.UsuarioId != usuarioId)
+                    return Forbid();
+
+                publicacion.Eliminada = true;
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
-                return View();
+                return View("Index", "Home");
             }
         }
     }

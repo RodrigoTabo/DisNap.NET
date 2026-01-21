@@ -15,7 +15,25 @@
                     <div class="fw-bold small">@item.Usuario.UserName</div>
                 </div>
             </div>
-            <button class="btn btn-icon"><span class="material-symbols-outlined">more_horiz</span></button>
+            @if (item.UsuarioId == (string)ViewBag.CurrentUserId)
+            {
+                <div class="dropdown">
+                    <button class="btn btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="material-symbols-outlined">more_vert</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow">
+                        <li>
+                            <form asp-controller="Publicacion" asp-action="Delete" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" value="Delete" class="dropdown-item text-danger">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            }
         </div>
 
         @*Contenido de la publicacion*@
