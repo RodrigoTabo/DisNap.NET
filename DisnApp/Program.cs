@@ -1,0 +1,82 @@
+using DisnApp.Data;
+using DisnApp.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+//Incluir contexto
+builder.Services.AddDbContext<RedDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("RedDbContext")));
+
+//add identity core
+builder.Services
+    .AddDefaultIdentity<Usuario>(
+    options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireNonAlphanumeric = false;
+
+        //Password
+        options.Password.RequiredLength = 3;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredUniqueChars = 0;
+
+        //SignIn
+        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = false;
+        options.SignIn.RequireConfirmedPhoneNumber = false;
+
+
+        //User
+        options.User.RequireUniqueEmail = true;
+
+
+        //Bloqueo
+        //Cuanto bloqueo le podemos dar a una cuenta.
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(0);
+        //Despues de cuanto intentos le damos el bloqueo?
+        options.Lockout.MaxFailedAccessAttempts = 1;
+        //Vamos a permitir que las cuentas nuevas se bloqueen?
+        options.Lockout.AllowedForNewUsers = true;
+
+
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<RedDbContext>();
+builder.Services.AddRazorPages();
+
+
+var app = builder.Build();
+
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapRazorPages();
+
+app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+
+app.Run();

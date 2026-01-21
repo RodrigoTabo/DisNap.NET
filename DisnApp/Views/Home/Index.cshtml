@@ -1,0 +1,98 @@
+﻿@model List<Publicacion>
+
+
+
+
+
+@foreach (var item in Model)
+{
+    <div class="card border mb-4 bg-white">
+        @*Foto de perfil y opciones*@
+        <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <img alt="User" class="rounded-circle border me-3" height="32" src="@item.UrlImagen" width="32" />
+                <div>
+                    <div class="fw-bold small">@item.Usuario.UserName</div>
+                </div>
+            </div>
+            <button class="btn btn-icon"><span class="material-symbols-outlined">more_horiz</span></button>
+        </div>
+
+        @*Contenido de la publicacion*@
+        <img alt="Post content" class="post-img card-img-top" src="@item.UrlImagen" />
+        @*Funcionalidades de la publicacion ++*@
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="d-flex gap-3">
+                    <button class="btn btn-icon"><span class="material-symbols-outlined">favorite</span></button>
+                    <button class="btn btn-icon"><span class="material-symbols-outlined">chat_bubble</span></button>
+                    <button class="btn btn-icon"><span class="material-symbols-outlined">send</span></button>
+                </div>
+                <button class="btn btn-icon"><span class="material-symbols-outlined">bookmark</span></button>
+            </div>
+            <span class="fw-bold small mb-1">@item.Likes.Count</span>
+            <p class="card-text small mb-2">
+                <span class="fw-bold">@item.Usuario.UserName</span> @item.Descripcion
+            </p>
+            <button class="btn btn-link p-0 text-muted small text-decoration-none mb-1">View all @item.Comentarios.Count comments</button>
+            <div class="text-muted text-uppercase mt-1" style="font-size: 0.65rem;">Subida hace @item.FechaSubida</div>
+        </div>
+
+        @*añadir comentarios*@
+        <div class="card-footer bg-white border-top-0 py-3">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-0 p-0 me-2">
+                    <span class="material-symbols-outlined text-muted">sentiment_satisfied</span>
+                </span>
+                <input class="form-control border-0 p-0 shadow-none small" placeholder="Add a comment..." type="text" />
+                <button class="btn btn-link text-decoration-none fw-bold p-0 ms-2" style="font-size: 0.875rem;">Post</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+<style>
+    body {
+        background-color: #fafafa;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    .post-img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+    }
+
+    .material-symbols-outlined {
+        vertical-align: middle;
+        font-size: 26px;
+    }
+
+    .story-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid #dee2e6;
+        padding: 2px;
+        object-fit: cover;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+
+    .btn-icon {
+        padding: 0;
+        border: none;
+        background: none;
+        color: #212529;
+    }
+
+        .btn-icon:hover {
+            color: #6c757d;
+        }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

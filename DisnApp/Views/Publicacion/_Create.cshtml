@@ -1,0 +1,60 @@
+﻿@model DisnApp.ViewModel.CrearPublicacionVM
+
+<div class="modal fade" id="crearPublicacionModal" tabindex="-1" aria-labelledby="crearPublicacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 600px;">
+        <div class="modal-content bg-dark text-white border-0 shadow-lg rounded-4 overflow-hidden">
+
+            <div class="modal-header border-0 px-4 pt-4 pb-2">
+                <h5 class="modal-title fw-bold mb-0" id="crearPublicacionModalLabel">Crear nueva publicación</h5>
+
+                <!-- Cerrar -->
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <form asp-controller="Publicacion" asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                    @Html.AntiForgeryToken()
+                    <div class="mb-4">
+                        <label asp-for="Descripcion" class="form-label fw-semibold mb-2">Descripción</label>
+                        <textarea asp-for="Descripcion" class="form-control bg-dark text-white border-secondary" placeholder="Escribe lo que estás pensando..."></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        <div class="text-white-50 small mt-2 d-flex justify-content-end">
+                            <span id="contador">0</span> / 280
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="UrlImagen" class="form-label fw-semibold mb-2">URL de la Imagen</label>
+                        <input asp-for="UrlImagen" class="form-control bg-dark text-white border-secondary" type="text" />
+                        <span asp-validation-for="UrlImagen" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label text-white-50 small fw-medium mb-2">Vista previa</label>
+
+                        <div class="position-relative rounded-4 overflow-hidden border border-secondary">
+                            <img id="imgPreview" alt="Post image preview" class="w-100 d-block" style="height: 220px; object-fit: cover;"
+                                 src="" />
+
+                            <button class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2"
+                                    type="button"
+                                    title="Quitar imagen">
+                                ×
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 gap-2 px-4 pb-4">
+                        <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Publicar </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
