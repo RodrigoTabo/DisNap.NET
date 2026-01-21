@@ -127,5 +127,34 @@ namespace DisnApp.Controllers
                 return View("Index", "Home");
             }
         }
+
+        [HttpPost]
+        [Authorize]
+        [AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> Like (int id)
+        {
+            var usuarioId = _userManager.GetUserId(User);
+            var likeExistente = await _context.PublicacionLikes
+                .FirstOrDefaultAsync(l => l.PublicacionId == id && l.UsuarioId == usuarioId);
+
+            if (likeExistente != null)
+            {
+                _context.PublicacionLikes.Remove(likeExistente);
+            }
+            else
+            {
+                var nuevoLike = new PublicacionLike
+                {
+                    PublicacionId = id,
+                    UsuarioId = usuarioId,
+                    FechaLike = DateTime.Now
+                };
+                await _context.PublicacionLikes.AddAsync(nuevoLike);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+
     }
 }

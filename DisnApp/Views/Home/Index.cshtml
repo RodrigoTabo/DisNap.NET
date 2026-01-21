@@ -42,13 +42,19 @@
         <div class="card-body">
             <div class="d-flex justify-content-between mb-3">
                 <div class="d-flex gap-3">
-                    <button class="btn btn-icon"><span class="material-symbols-outlined">favorite</span></button>
+                    <form asp-controller="Publicacion" asp-action="Like" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-icon p-0">
+                            <span class="material-symbols-outlined">favorite</span>
+                        </button>
+                        <span class="fw-bold small mb-1">@item.Likes.Count</span>
+                    </form>
                     <button class="btn btn-icon"><span class="material-symbols-outlined">chat_bubble</span></button>
                     <button class="btn btn-icon"><span class="material-symbols-outlined">send</span></button>
                 </div>
                 <button class="btn btn-icon"><span class="material-symbols-outlined">bookmark</span></button>
             </div>
-            <span class="fw-bold small mb-1">@item.Likes.Count</span>
             <p class="card-text small mb-2">
                 <span class="fw-bold">@item.Usuario.UserName</span> @item.Descripcion
             </p>
