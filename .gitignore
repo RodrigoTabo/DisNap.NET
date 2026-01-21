@@ -6,6 +6,10 @@
 # dotenv files
 .env
 
+.vs/
+**/bin/
+**/obj/
+
 # User-specific files
 *.rsuser
 *.suo
