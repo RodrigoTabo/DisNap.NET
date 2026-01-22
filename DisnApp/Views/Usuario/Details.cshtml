@@ -29,7 +29,6 @@
                     @if (ViewBag.EsMiPerfil == true)
                     {
                         <div class="d-flex gap-2">
-                            <button class="btn btn-edit btn-sm px-3" type="button">Editar Perfil</button>
                             <button class="btn btn-link text-dark p-0" type="button" aria-label="Configuración">
                                 <span class="material-symbols-outlined">Setting</span>
                             </button>
@@ -116,9 +115,15 @@
                         foreach (var item in Model.Publicaciones)
                         {
                             <div class="col-4">
-                                <div class="ratio ratio-1x1 bg-light">
-                                    <img src="@item.UrlImagen" alt="Post @item.Id" class="post-image" />
-                                </div>
+                                <button type="button"
+                                        class="btn p-0 border-0 w-100 bg-transparent"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#PublicacionModal"
+                                        data-post-id="@item.Id">
+                                    <div class="ratio ratio-1x1 bg-light">
+                                        <img src="@item.UrlImagen" alt="Post @item.Id" class="post-image w-100 h-100" />
+                                    </div>
+                                </button>
                             </div>
                         }
                     }
@@ -129,6 +134,7 @@
                         </div>
                     }
                 </div>
+
             </div>
         </div>
 

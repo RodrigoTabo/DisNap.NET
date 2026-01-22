@@ -31,6 +31,17 @@ namespace DisnApp.Controllers
                 .OrderByDescending(p => p.FechaSubida)
                 .ToListAsync();
 
+            var historias = await _context.Historias
+                .Include(h => h.Usuario)
+                .Where(h => h.FechaExpiracion > DateTime.UtcNow)
+                .OrderByDescending(h => h.FechaCreacion)
+                .ToListAsync();
+
+            ViewBag.HistoriasPorUsuario = historias
+                .GroupBy(h => h.UsuarioId)
+                .ToList();
+
+
             ViewBag.CurrentUserId = _userManager.GetUserId(User);
 
             return View(publicacion);

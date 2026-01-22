@@ -114,12 +114,12 @@
             <!-- Header -->
             <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <img src="@Model.Usuario?"
-                         class="rounded-circle avatar-lg me-3"
+                    <img src="~/img/avatar-default.png"
+                         class="rounded-circle avatar-sm me-3 mt-1"
                          alt="Profile"
                          onerror="this.style.display='none';" />
                     <div>
-                        <span class="fw-bold d-block small">@Model.Usuario?.UserName</span>
+                        <span class="fw-bold d-block small">@Model.UsuarioId</span>
                         <span class="text-muted small">@Model.FechaSubida.ToString("dd/MM/yyyy HH:mm")</span>
                     </div>
                 </div>
@@ -136,7 +136,7 @@
                 @if (!string.IsNullOrWhiteSpace(Model.Descripcion))
                 {
                     <div class="d-flex mb-4">
-                        <img src="@Model.Usuario?"
+                        <img src="~/img/avatar-default.png"
                              class="rounded-circle avatar-sm me-3 mt-1"
                              alt="Profile"
                              onerror="this.style.display='none';" />

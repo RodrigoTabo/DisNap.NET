@@ -39,6 +39,8 @@ namespace DisnApp.Controllers
                  .Include(u => u.Siguiendo)
                  .FirstOrDefaultAsync(p => p.Id == id);
 
+            if (usuario == null) return NotFound(); // <- clave
+
 
             ViewBag.EsMiPerfil = (usuarioId != null && usuarioId == usuario.Id);
 

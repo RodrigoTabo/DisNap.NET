@@ -16,8 +16,8 @@ public class HistoriaVistaConfig : IEntityTypeConfiguration<HistoriaVista>
             .OnDelete(DeleteBehavior.Restrict);
 
         b.HasOne(x => x.Historia)
-            .WithMany() 
-            .HasForeignKey(x => x.HistoriaId)
-            .OnDelete(DeleteBehavior.Restrict);
+          .WithMany(h => h.HistoriaVistas)
+          .HasForeignKey(x => x.HistoriaId)
+          .OnDelete(DeleteBehavior.Cascade);
     }
 }
