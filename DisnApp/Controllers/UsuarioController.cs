@@ -30,12 +30,21 @@ namespace DisnApp.Controllers
         public async Task<IActionResult> Details(string id)
         {
 
-           var usuario = await _context.Usuarios
-                .Include(u => u.Publicaciones)
-                .Include(u => u.Seguidores)
-                .Include(u => u.Siguiendo)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var usuarioId = _userManager.GetUserId(User);
 
+
+            var usuario = await _context.Usuarios
+                 .Include(u => u.Publicaciones)
+                 .Include(u => u.Seguidores)
+                 .Include(u => u.Siguiendo)
+                 .FirstOrDefaultAsync(p => p.Id == id);
+
+
+            ViewBag.EsMiPerfil = (usuarioId != null && usuarioId == usuario.Id);
+
+            // si no está logueado => no sigue
+            ViewBag.YaLoSigo = usuarioId != null && await _context.Set<SeguidorUsuario>()
+                .AnyAsync(s => s.SeguidorId == usuarioId && s.SeguidoId == usuario.Id);
 
             return View(usuario);
         }
@@ -102,5 +111,42 @@ namespace DisnApp.Controllers
                 return View();
             }
         }
+
+        // POST: UsuarioController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Seguir(string id) // id = perfil a seguir (SeguidoId)
+        {
+            var usuarioId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(usuarioId)) return Challenge(); // no logueado -> login
+
+            if (usuarioId == id) return RedirectToAction("Details", new { id }); // no te sigas a vos mismo
+
+            var existente = await _context.SeguidorUsuarios
+                .FirstOrDefaultAsync(s => s.SeguidorId == usuarioId && s.SeguidoId == id);
+
+            if (existente != null)
+            {
+                _context.SeguidorUsuarios.Remove(existente);
+            }
+            else
+            {
+                var nuevo = new SeguidorUsuario
+                {
+                    SeguidorId = usuarioId,
+                    SeguidoId = id,
+                    FechaInicio = DateTime.UtcNow
+                };
+
+                await _context.SeguidorUsuarios.AddAsync(nuevo); 
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Volver al perfil que estabas mirando
+            return RedirectToAction("Details", new { id });
+        }
+
+
     }
 }
