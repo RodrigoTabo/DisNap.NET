@@ -1,5 +1,6 @@
 ﻿using DisnApp.Data;
 using DisnApp.Models;
+using DisnApp.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +17,8 @@ namespace DisnApp.Controllers
 
         public MensajeController(RedDbContext context, UserManager<Usuario> userManager)
         {
-            _context = context; 
-            _userManager = userManager; 
+            _context = context;
+            _userManager = userManager;
         }
 
         // GET: MensajeController
@@ -106,13 +107,75 @@ namespace DisnApp.Controllers
         {
             if (id <= 0) return NotFound();
 
+            var userId = _userManager.GetUserId(User);
+
+            // Marcar como leídos los mensajes del otro usuario en esta conversación
+            await _context.Mensajes
+                .Where(m => m.ConversacionId == id &&
+                            m.EmisorId != userId &&
+                            m.ReadAt == null)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(m => m.ReadAt, DateTime.UtcNow));
+
+
             var mensajes = await _context.Mensajes
                 .Where(m => m.ConversacionId == id)
                 .OrderBy(m => m.FechaEnvio) // o el campo que uses
                 .ToListAsync();
 
+
+
+            ViewBag.ConversacionId = id;
+            ViewBag.CurrentUserId = userId;
             // devolver vacío en vez de reventar
             return PartialView("_Chat", mensajes);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Chat(int ConversacionId, string texto)
+        {
+
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
+
+            if (ConversacionId <= 0) return BadRequest();
+
+            var esParticipante = await _context.ConversacionUsuarios
+                .AnyAsync(cu => cu.ConversacionId == ConversacionId && cu.UsuarioId == userId);
+
+            if (!esParticipante) return Forbid();
+
+
+            var msg = new Mensaje
+            {
+                ConversacionId = ConversacionId,
+                EmisorId = userId,
+                Texto = texto,
+                FechaEnvio = DateTime.UtcNow
+            };
+
+
+            var conv = await _context.Conversaciones.FirstOrDefaultAsync(c => c.Id == ConversacionId);
+            if (conv != null) conv.UltimaActividad = DateTime.UtcNow;
+
+            _context.Mensajes.Add(msg);
+
+            await _context.SaveChangesAsync();
+
+            var mensajes = await _context.Mensajes
+                .Where(m => m.ConversacionId == ConversacionId)
+                .OrderBy(m => m.FechaEnvio) // o el campo que uses
+                .ToListAsync();
+
+
+
+            ViewBag.CurrentUserId = userId;
+            ViewBag.ConversacionId = ConversacionId;
+
+
+            return PartialView("_Chat", mensajes);
+
         }
 
     }

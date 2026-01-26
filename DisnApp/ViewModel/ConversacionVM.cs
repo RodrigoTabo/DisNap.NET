@@ -9,6 +9,8 @@
         public string OtroUsuarioNombre { get; set; }
         public string? UltimoTexto { get; set; }
         public DateTime? UltimaActividad { get; set; }
+        public int NoLeidos { get; set; } 
+
     }
 
 }

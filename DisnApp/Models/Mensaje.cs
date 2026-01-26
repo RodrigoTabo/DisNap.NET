@@ -20,5 +20,8 @@ namespace DisnApp.Models
         [Required]
         public DateTime FechaEnvio { get; set; }
 
+        public DateTime? ReadAt { get; set; } // ✅ visto / leído por el otro
+
+
     }
 }

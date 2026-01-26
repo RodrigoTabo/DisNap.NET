@@ -71,24 +71,4 @@ document.addEventListener("submit", async function (e) {
     if (input) input.value = "";
 });
 
-const chatModalEl = document.getElementById('chatModal');
 
-chatModalEl.addEventListener('show.bs.modal', async (event) => {
-    const trigger = event.relatedTarget;          // el botón clickeado
-    const chatId = trigger.getAttribute('data-chat-id');
-
-    const body = document.getElementById('chatModalBody');
-    body.innerHTML = `<div class="p-4 text-center">Cargando...</div>`;
-
-    const res = await fetch(`/Mensaje/Chat?id=${encodeURIComponent(chatId)}`, {
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-    });
-
-    if (!res.ok) {
-        body.innerHTML = `<div class="p-4 text-danger">Error cargando el chat.</div>`;
-        return;
-    }
-
-    const html = await res.text();
-    body.innerHTML = html;
-});

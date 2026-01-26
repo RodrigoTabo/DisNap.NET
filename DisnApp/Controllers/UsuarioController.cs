@@ -151,10 +151,11 @@ namespace DisnApp.Controllers
         }
 
 
-        public async Task<IActionResult> Conversacion (int id)
+        [HttpGet]
+        public async Task<IActionResult> Conversacion()
         {
-
             var userId = _userManager.GetUserId(User);
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
             var items = await _context.Conversaciones
                 .Where(c => c.Participantes.Any(p => p.UsuarioId == userId))
@@ -167,8 +168,10 @@ namespace DisnApp.Controllers
                         .FirstOrDefault(),
                     OtroUsuarioNombre = c.Participantes
                         .Where(p => p.UsuarioId != userId)
-                        .Select(p => p.Usuario.UserName) // o Nombre/Apellido si tené
+                        .Select(p => p.Usuario.UserName)
                         .FirstOrDefault(),
+                    NoLeidos = c.Mensajes
+                    .Count(m => m.EmisorId != userId && m.ReadAt == null),
                     UltimoTexto = c.Mensajes
                         .OrderByDescending(m => m.FechaEnvio)
                         .Select(m => m.Texto)
@@ -177,12 +180,15 @@ namespace DisnApp.Controllers
                         .OrderByDescending(m => m.FechaEnvio)
                         .Select(m => (DateTime?)m.FechaEnvio)
                         .FirstOrDefault()
+
                 })
                 .OrderByDescending(x => x.UltimaActividad)
                 .ToListAsync();
 
-            return View(items);
+            if (isAjax)
+                return PartialView("~/Views/Mensaje/_Bandeja.cshtml", items);
 
+            return View(items);
         }
 
     }
