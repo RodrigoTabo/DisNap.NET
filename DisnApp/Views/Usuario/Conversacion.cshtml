@@ -1,0 +1,111 @@
+﻿@model List<DisnApp.ViewModel.ConversacionVM>
+<div class="container-fluid p-0 chat-container shadow-sm bg-white">
+    <div class="row g-0 chat-shell">
+
+        <aside class="col-12 col-md-4 col-lg-3 border-end bg-light d-flex flex-column chat-sidebar">
+            <!-- Header -->
+            <div class="p-3 bg-white border-bottom d-flex align-items-center justify-content-between flex-shrink-0">
+                <h5 class="fw-bold mb-0">Mensajes</h5>
+
+                <button class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center p-2">
+                    <span class="material-symbols-outlined text-white">edit</span>
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="p-3 bg-white border-bottom flex-shrink-0">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <span class="material-symbols-outlined text-muted">search</span>
+                    </span>
+                    <input class="form-control bg-light border-0 shadow-none" placeholder="Buscar conversacion..." type="text" />
+                </div>
+            </div>
+
+            <!-- List -->
+            <div class="list-group list-group-flush sidebar-scroll flex-grow-1">
+                @foreach (var item in Model)
+                {
+                    <button class="list-group-item list-group-item-action"
+                            data-bs-toggle="modal"
+                            data-bs-target="#chatModal"
+                            data-chat-id="@item.ConversacionId">
+
+                            <div class="d-flex w-100 align-items-center">
+                                <div class="position-relative me-3 flex-shrink-0">
+                                    <img alt="@item.OtroUsuarioId"
+                                         class="rounded-circle avatar-md border border-2 border-white"
+                                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjrJGqRrnAK_hdpxKmZLJqhaSkkkqLC5oDpseif41GRfTvOX916Vf158U_PTodYMGpPN_CyBS7STNJin8QOxQ7Ja8vHsr5nK1fbAG-AfGHVx9zR-emnANPpnQEHQQjH0IhBDXZ7zexrQT-7IDHCP-XY8aBT67UQA18gwKGR6dJIYx2wCufFv-HXu3A8b_APg8jphemOAPVepJSNUT8aB5h4QAPRFlsJ1BDzr3UqK-WklycQ51G2NhCmDo8Z1cZQxbG6k3opoOSqYM" />
+
+                                    <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-light rounded-circle"></span>
+                                </div>
+
+                                <div class="flex-grow-1 min-width-0">
+                                    <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+                                        <h6 class="mb-0 text-truncate fw-bold">@item.OtroUsuarioId</h6>
+                                        <small class="badge bg-primary rounded-pill opacity-75 flex-shrink-0">@item.UltimaActividad</small>
+                                    </div>
+                                    <p class="mb-0 text-truncate small opacity-75">@item.UltimoTexto</p>
+                                </div>
+                            </div>
+                    </button>
+                }
+            </div>
+        </aside>
+
+        <div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-side">
+                <div class="modal-content h-100">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chat</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body p-0" id="chatModalBody">
+                        <div class="text-center p-4">Seleccioná un chat…</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+<style>
+    .chat-container {
+        height: 100vh; /* o calc(100vh - 56px) si tenés navbar */
+        overflow: hidden;
+        border-radius: 16px; /* opcional, para que se vea bien con shadow */
+    }
+
+    .chat-shell {
+        height: 100%;
+    }
+
+    .chat-sidebar {
+        height: 100%;
+        min-height: 0; /* IMPORTANTÍSIMO para que el scroll funcione */
+    }
+
+    .sidebar-scroll {
+        overflow-y: auto;
+        min-height: 0; /* IMPORTANTÍSIMO */
+    }
+
+    /* Si no tenías esta clase, definila así */
+    .avatar-md {
+        width: 44px;
+        height: 44px;
+        object-fit: cover;
+    }
+
+    /* Bootstrap no trae min-width-0 como clase */
+    .min-width-0 {
+        min-width: 0;
+    }
+</style>

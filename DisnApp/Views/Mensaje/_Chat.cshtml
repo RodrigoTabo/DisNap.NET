@@ -1,0 +1,53 @@
+﻿@model List<Mensaje>
+
+@{
+    // Ajustá esto a tu forma de obtener el usuario actual
+    var currentUserId = ViewBag.CurrentUserId as string;
+}
+
+<div class="d-flex flex-column" style="height: 70vh;">
+    
+    <!-- Header interno opcional -->
+    <div class="px-3 py-2 border-bottom bg-white">
+        <div class="d-flex align-items-center gap-2">
+            <div class="rounded-circle bg-secondary-subtle" style="width:36px;height:36px;"></div>
+            <div class="min-width-0">
+                <div class="fw-semibold text-truncate">Chat</div>
+                <div class="small text-muted">En línea</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    <div class="flex-grow-1 overflow-auto p-3 bg-light" id="chatScroll">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="text-center text-muted py-5">No hay mensajes todavía.</div>
+        }
+        else
+        {
+            foreach (var m in Model)
+            {
+                var isMine = currentUserId != null && m.EmisorId == currentUserId;
+
+                <div class="d-flex mb-2 @(isMine ? "justify-content-end" : "justify-content-start")">
+                    <div class="px-3 py-2 shadow-sm @(isMine ? "bg-primary text-white" : "bg-white border")"
+                         style="max-width: 75%; border-radius: 18px;">
+                        <div class="small">@m.Texto</div>
+                        <div class="text-end mt-1" style="font-size: 11px; opacity: .75;">
+                            @m.FechaEnvio.ToString("HH:mm")
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Input -->
+    <div class="p-3 border-top bg-white">
+        <form class="d-flex gap-2" id="sendMessageForm">
+            <input class="form-control" name="texto" placeholder="Escribí un mensaje..." autocomplete="off" />
+            <button class="btn btn-primary" type="submit">Enviar</button>
+        </form>
+    </div>
+</div>

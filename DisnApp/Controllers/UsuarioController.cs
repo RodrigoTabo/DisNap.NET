@@ -1,5 +1,6 @@
 ﻿using DisnApp.Data;
 using DisnApp.Models;
+using DisnApp.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -149,6 +150,40 @@ namespace DisnApp.Controllers
             return RedirectToAction("Details", new { id });
         }
 
+
+        public async Task<IActionResult> Conversacion (int id)
+        {
+
+            var userId = _userManager.GetUserId(User);
+
+            var items = await _context.Conversaciones
+                .Where(c => c.Participantes.Any(p => p.UsuarioId == userId))
+                .Select(c => new ConversacionVM
+                {
+                    ConversacionId = c.Id,
+                    OtroUsuarioId = c.Participantes
+                        .Where(p => p.UsuarioId != userId)
+                        .Select(p => p.UsuarioId)
+                        .FirstOrDefault(),
+                    OtroUsuarioNombre = c.Participantes
+                        .Where(p => p.UsuarioId != userId)
+                        .Select(p => p.Usuario.UserName) // o Nombre/Apellido si tené
+                        .FirstOrDefault(),
+                    UltimoTexto = c.Mensajes
+                        .OrderByDescending(m => m.FechaEnvio)
+                        .Select(m => m.Texto)
+                        .FirstOrDefault(),
+                    UltimaActividad = c.UltimaActividad ?? c.Mensajes
+                        .OrderByDescending(m => m.FechaEnvio)
+                        .Select(m => (DateTime?)m.FechaEnvio)
+                        .FirstOrDefault()
+                })
+                .OrderByDescending(x => x.UltimaActividad)
+                .ToListAsync();
+
+            return View(items);
+
+        }
 
     }
 }
