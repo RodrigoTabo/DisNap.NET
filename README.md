@@ -33,7 +33,7 @@ V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 - ✅ Bandeja/lista de conversaciones
 - ✅ Apertura del chat en modal lateral (Bootstrap)
 - ✅ Carga del historial de mensajes por conversación (partial)
-- ❌ Enviar mensaje (pendiente)
+- ✅ Enviar mensaje (pendiente)
 - ❌ Borrar mensajes / borrar conversación (pendiente)
 
 ## Arquitectura / stack
