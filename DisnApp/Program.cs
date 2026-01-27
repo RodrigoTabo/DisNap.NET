@@ -1,5 +1,6 @@
 using DisnApp.Data;
 using DisnApp.Models;
+using DisnApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,8 @@ builder.Services.AddControllersWithViews();
 
 //Incluir contexto
 builder.Services.AddDbContext<RedDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("RedDbContext")));
+builder.Services.AddScoped<IMensajeService, MensajeService>();
+
 
 //add identity core
 builder.Services

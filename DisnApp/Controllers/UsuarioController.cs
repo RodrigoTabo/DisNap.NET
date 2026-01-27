@@ -1,5 +1,6 @@
 ﻿using DisnApp.Data;
 using DisnApp.Models;
+using DisnApp.Services;
 using DisnApp.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +14,13 @@ namespace DisnApp.Controllers
 
         private readonly UserManager<Usuario> _userManager;
         private readonly RedDbContext _context;
+        private readonly IMensajeService _mensajeService;
 
-        public UsuarioController(UserManager<Usuario> userManager, RedDbContext context)
+        public UsuarioController(UserManager<Usuario> userManager, RedDbContext context, IMensajeService mensajeService)
         {
             _userManager = userManager;
             _context = context;
+            _mensajeService = mensajeService;
         }
 
 
@@ -155,35 +158,12 @@ namespace DisnApp.Controllers
         public async Task<IActionResult> Conversacion()
         {
             var userId = _userManager.GetUserId(User);
-            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest"
+                         || Request.Query.ContainsKey("partial");
 
-            var items = await _context.Conversaciones
-                .Where(c => c.Participantes.Any(p => p.UsuarioId == userId))
-                .Select(c => new ConversacionVM
-                {
-                    ConversacionId = c.Id,
-                    OtroUsuarioId = c.Participantes
-                        .Where(p => p.UsuarioId != userId)
-                        .Select(p => p.UsuarioId)
-                        .FirstOrDefault(),
-                    OtroUsuarioNombre = c.Participantes
-                        .Where(p => p.UsuarioId != userId)
-                        .Select(p => p.Usuario.UserName)
-                        .FirstOrDefault(),
-                    NoLeidos = c.Mensajes
-                    .Count(m => m.EmisorId != userId && m.ReadAt == null),
-                    UltimoTexto = c.Mensajes
-                        .OrderByDescending(m => m.FechaEnvio)
-                        .Select(m => m.Texto)
-                        .FirstOrDefault(),
-                    UltimaActividad = c.UltimaActividad ?? c.Mensajes
-                        .OrderByDescending(m => m.FechaEnvio)
-                        .Select(m => (DateTime?)m.FechaEnvio)
-                        .FirstOrDefault()
+            var items = await _mensajeService.GetBandejaAsync(userId); // ✅ await
 
-                })
-                .OrderByDescending(x => x.UltimaActividad)
-                .ToListAsync();
 
             if (isAjax)
                 return PartialView("~/Views/Mensaje/_Bandeja.cshtml", items);

@@ -44,7 +44,7 @@ async function refreshMessagesOnly() {
 
     const html = await res.text();
 
-    // Necesitás tener <div id="chatMessages"> ... </div> en _Chat.cshtml
+    // 
     const doc = new DOMParser().parseFromString(html, "text/html");
     const newMessages = doc.getElementById("chatMessages");
     const currentMessages = document.getElementById("chatMessages");
