@@ -12,6 +12,11 @@ builder.Services.AddControllersWithViews();
 //Incluir contexto
 builder.Services.AddDbContext<RedDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("RedDbContext")));
 builder.Services.AddScoped<IMensajeService, MensajeService>();
+builder.Services.AddScoped<IHistoriaService, HistoriaService>();
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IPublicacionService, PublicacionService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
 
 
 //add identity core

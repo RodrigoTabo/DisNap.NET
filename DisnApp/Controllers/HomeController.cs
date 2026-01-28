@@ -1,5 +1,6 @@
 using DisnApp.Data;
 using DisnApp.Models;
+using DisnApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,52 +11,27 @@ namespace DisnApp.Controllers
     public class HomeController : Controller
     {
 
-        private readonly RedDbContext _context;
         private readonly UserManager<Usuario> _userManager;
+        private readonly IHomeService _homeService;
 
-        public HomeController(RedDbContext context, UserManager<Usuario> userManager)
+        public HomeController(UserManager<Usuario> userManager, IHomeService homeService)
         {
-            _context = context;
             _userManager = userManager;
-
+            _homeService = homeService;
         }
 
         public async Task<IActionResult> Index()
         {
 
-            var publicacion = await _context.Publicaciones
-                .Include(p => p.Usuario)
-                .Include(p => p.Likes)
-                .Include(p => p.Comentarios)
-                .Where(p => !p.Eliminada)
-                .OrderByDescending(p => p.FechaSubida)
-                .ToListAsync();
+            var publicacion = await _homeService.GetPublicacionAsync();
+            var historias = await _homeService.GetHistoriaAsync();
 
-            var historias = await _context.Historias
-                .Include(h => h.Usuario)
-                .Where(h => h.FechaExpiracion > DateTime.UtcNow)
-                .OrderByDescending(h => h.FechaCreacion)
-                .ToListAsync();
-
-            ViewBag.HistoriasPorUsuario = historias
-                .GroupBy(h => h.UsuarioId)
-                .ToList();
-
-
+            ViewBag.HistoriasPorUsuario = historias.GroupBy(h => h.UsuarioId).ToList();
             ViewBag.CurrentUserId = _userManager.GetUserId(User);
 
             return View(publicacion);
+
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

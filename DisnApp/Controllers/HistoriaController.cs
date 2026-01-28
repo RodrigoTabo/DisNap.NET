@@ -1,5 +1,6 @@
 ﻿using DisnApp.Data;
 using DisnApp.Models;
+using DisnApp.Services;
 using DisnApp.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,104 +13,26 @@ namespace DisnApp.Controllers
 {
     public class HistoriaController : Controller
     {
-        private readonly RedDbContext _context;
+        private readonly IHistoriaService _historiaService;
         private readonly UserManager<Usuario> _userManager;
 
-        public HistoriaController(RedDbContext context, UserManager<Usuario> userManager)
+        public HistoriaController(UserManager<Usuario> userManager, IHistoriaService historiaService)
         {
-            _context = context;
             _userManager = userManager;
+            _historiaService = historiaService;
         }
 
-
-        // GET: HistoriaController
-        public ActionResult Index()
+        [Authorize]
+        public async Task<ActionResult> Viewer()
         {
-            return View();
-        }
+            var userId = _userManager.GetUserId(User);
 
-        // GET: HistoriaController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+            if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
 
-        // GET: HistoriaController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: HistoriaController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HistoriaController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: HistoriaController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HistoriaController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: HistoriaController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-
-        public async Task<ActionResult> _Viewer(int id)
-        {
-
-            var ahora = DateTime.UtcNow;
-
-            var historias = await _context.Historias
-            .Include(h => h.UsuarioId)
-            .Where(h => h.FechaExpiracion > ahora)
-            .OrderByDescending(h => h.FechaCreacion)
-            .ToListAsync();
+            var historias = await _historiaService.GetViewerAsync();
 
             return View(historias);
+
         }
 
     }

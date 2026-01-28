@@ -18,7 +18,7 @@ namespace DisnApp.Controllers
 
         public MensajeController(IMensajeService mensajeService, UserManager<Usuario> userManager)
         {
-            _mensajeService= mensajeService;
+            _mensajeService = mensajeService;
             _userManager = userManager;
         }
 
@@ -31,7 +31,6 @@ namespace DisnApp.Controllers
 
             if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
 
-
             try
             {
                 var mensajes = await _mensajeService.GetChatAsync(id, userId);
@@ -43,11 +42,6 @@ namespace DisnApp.Controllers
             {
                 return Forbid();
             }
-
-
-
-
-            // devolver vacío en vez de reventar
 
         }
 

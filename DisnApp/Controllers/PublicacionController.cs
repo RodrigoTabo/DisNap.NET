@@ -1,13 +1,10 @@
-﻿using DisnApp.Data;
-using DisnApp.Models;
+﻿using DisnApp.Models;
+using DisnApp.Services;
 using DisnApp.ViewModel;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+
 
 namespace DisnApp.Controllers
 {
@@ -15,39 +12,25 @@ namespace DisnApp.Controllers
     {
 
         private readonly UserManager<Usuario> _userManager;
-        private readonly RedDbContext _context;
+        private readonly IPublicacionService _publicacionService;
 
-        public PublicacionController(UserManager<Usuario> userManager, RedDbContext context)
+
+
+        public PublicacionController(UserManager<Usuario> userManager, IPublicacionService publicacionService)
         {
-            _context = context;
             _userManager = userManager;
-        }
-        // GET: PublicacionController
-        public ActionResult Index()
-        {
-            return View();
+            _publicacionService = publicacionService;
         }
 
         // GET: PublicacionController/Details/5
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var publicacion = await _context.Publicaciones
-                .Include(p => p.Usuario)
-                .Include(p => p.Likes)
-                .Include(p => p.Comentarios).ThenInclude(c => c.Usuario)
-                .FirstOrDefaultAsync(p => p.Id == id && !p.Eliminada);
 
+            var publicacion = await _publicacionService.GetDetailsAsync(id);
             if (publicacion == null) return NotFound();
 
             return PartialView("_Details", publicacion);
-        }
-
-        // GET: PublicacionController/Create
-        public ActionResult Create()
-        {
-
-            return View();
         }
 
         // POST: PublicacionController/Create
@@ -56,84 +39,43 @@ namespace DisnApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CrearPublicacionVM vm)
         {
-            try
+
+            if (ModelState.IsValid)
             {
-
-                if (ModelState.IsValid)
-                {
-                    var nueva = new Publicacion
-                    {
-                        UsuarioId = _userManager.GetUserId(User),
-                        Descripcion = vm.Descripcion,
-                        UrlImagen = vm.UrlImagen,
-                        FechaSubida = DateTime.Now
-                    };
-
-                    await _context.Publicaciones.AddAsync(nueva);
-                    await _context.SaveChangesAsync();
-                }
-
+                var userId = _userManager.GetUserId(User);
+                var nueva = await _publicacionService.CreateAsync(vm, userId);
                 return RedirectToAction("Index", "Home");
             }
-            catch
+            else
             {
-                return View();
+                return View(); 
             }
+
         }
 
-        // GET: PublicacionController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PublicacionController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PublicacionController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: PublicacionController/Delete/5
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> Delete(int id)
         {
+            if (id <= 0) return BadRequest();
+
+            var userId = _userManager.GetUserId(User);
+
             try
             {
-                var publicacion = await _context.Publicaciones.FirstOrDefaultAsync(p => p.Id == id);
+                var publicacion = await _publicacionService.SoftDeleteAsync(id, userId);
 
                 if (publicacion == null)
                     return NotFound();
 
-                var usuarioId = _userManager.GetUserId(User);
-
-                if (publicacion.UsuarioId != usuarioId)
-                    return Forbid();
-
-                publicacion.Eliminada = true;
-                await _context.SaveChangesAsync();
-
                 return RedirectToAction("Index", "Home");
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
-                return View("Index", "Home");
+                return Forbid();
             }
         }
 
@@ -142,25 +84,10 @@ namespace DisnApp.Controllers
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Like(int id)
         {
-            var usuarioId = _userManager.GetUserId(User);
-            var likeExistente = await _context.PublicacionLikes
-                .FirstOrDefaultAsync(l => l.PublicacionId == id && l.UsuarioId == usuarioId);
 
-            if (likeExistente != null)
-            {
-                _context.PublicacionLikes.Remove(likeExistente);
-            }
-            else
-            {
-                var nuevoLike = new PublicacionLike
-                {
-                    PublicacionId = id,
-                    UsuarioId = usuarioId,
-                    FechaLike = DateTime.Now
-                };
-                await _context.PublicacionLikes.AddAsync(nuevoLike);
-            }
-            await _context.SaveChangesAsync();
+            var userId = _userManager.GetUserId(User);
+            var nuevoLike = await _publicacionService.ToggleLikeAsync(id, userId);
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -169,41 +96,20 @@ namespace DisnApp.Controllers
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Comentar(int id, string contenido)
         {
-            var usuarioId = _userManager.GetUserId(User);
 
-            try
+            if (id <= 0) return BadRequest();
+            if (string.IsNullOrWhiteSpace(contenido)) return BadRequest("Contenido requerido.");
+
+            var userId = _userManager.GetUserId(User);
+            await _publicacionService.AddCommentAsync(id, contenido, userId);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                var nuevoComentario = new Comentario
-                {
-                    PublicacionId = id,
-                    UsuarioId = usuarioId,
-                    Contenido = contenido,
-                    FechaComentario = DateTime.Now
-                };
-
-                await _context.Comentarios.AddAsync(nuevoComentario);
-                await _context.SaveChangesAsync();
-
-                var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
-                if (isAjax)
-                {
-                    var comentarios = await _context.Comentarios
-                        .Where(c => c.PublicacionId == id)
-                        .Include(c => c.Usuario)
-                        .OrderByDescending(c => c.FechaComentario)
-                        .ToListAsync();
-
-                    return PartialView("_CommentsList", comentarios);
-                }
-
-                return RedirectToAction("Details", new { id });
-
-            }
-            catch (Exception ex)
-            {
-                return View("Index", "Home");
+                var comentarios = await _publicacionService.GetComentariosAsync(id);
+                return PartialView("_CommentsList", comentarios);
             }
 
+            return RedirectToAction("Details", new { id });
 
         }
 

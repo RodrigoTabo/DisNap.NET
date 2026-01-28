@@ -15,12 +15,14 @@ namespace DisnApp.Controllers
         private readonly UserManager<Usuario> _userManager;
         private readonly RedDbContext _context;
         private readonly IMensajeService _mensajeService;
+        private readonly IUsuarioService _usuarioService;
 
-        public UsuarioController(UserManager<Usuario> userManager, RedDbContext context, IMensajeService mensajeService)
+        public UsuarioController(UserManager<Usuario> userManager, RedDbContext context, IMensajeService mensajeService, IUsuarioService usuarioService)
         {
             _userManager = userManager;
             _context = context;
             _mensajeService = mensajeService;
+            _usuarioService = usuarioService;
         }
 
 
@@ -35,16 +37,10 @@ namespace DisnApp.Controllers
         {
 
             var usuarioId = _userManager.GetUserId(User);
+            var usuario = await _usuarioService.GetDetailsAsync(id);
 
-
-            var usuario = await _context.Usuarios
-                 .Include(u => u.Publicaciones)
-                 .Include(u => u.Seguidores)
-                 .Include(u => u.Siguiendo)
-                 .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (usuario == null) return NotFound(); // <- clave
-
+            if (usuario == null)
+                return NotFound(); // <- clave
 
             ViewBag.EsMiPerfil = (usuarioId != null && usuarioId == usuario.Id);
 
@@ -55,99 +51,17 @@ namespace DisnApp.Controllers
             return View(usuario);
         }
 
-        // GET: UsuarioController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: UsuarioController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UsuarioController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: UsuarioController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UsuarioController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: UsuarioController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
         // POST: UsuarioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Seguir(string id) // id = perfil a seguir (SeguidoId)
         {
-            var usuarioId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(usuarioId)) return Challenge(); // no logueado -> login
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return Challenge(); // no logueado -> login
 
-            if (usuarioId == id) return RedirectToAction("Details", new { id }); // no te sigas a vos mismo
+            if (userId == id) return RedirectToAction("Details", new { id }); // no te sigas a vos mismo
 
-            var existente = await _context.SeguidorUsuarios
-                .FirstOrDefaultAsync(s => s.SeguidorId == usuarioId && s.SeguidoId == id);
-
-            if (existente != null)
-            {
-                _context.SeguidorUsuarios.Remove(existente);
-            }
-            else
-            {
-                var nuevo = new SeguidorUsuario
-                {
-                    SeguidorId = usuarioId,
-                    SeguidoId = id,
-                    FechaInicio = DateTime.UtcNow
-                };
-
-                await _context.SeguidorUsuarios.AddAsync(nuevo); 
-            }
-
-            await _context.SaveChangesAsync();
+            var existente = await _usuarioService.PostSeguirAsync(id, userId);
 
             // Volver al perfil que estabas mirando
             return RedirectToAction("Details", new { id });
