@@ -25,15 +25,15 @@ V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 ### Historias
 
 - ✅ Visualización/listado de historias activas (casi terminado)
-- ❌ Agregar historia (pendiente)
-- ❌ Eliminar historia (pendiente)
+- ✅ Agregar historia (funcional)
+- ✅ Eliminar historia fisico (funcional)
 
 ### Mensajes
 
 - ✅ Bandeja/lista de conversaciones
 - ✅ Apertura del chat en modal lateral (Bootstrap)
 - ✅ Carga del historial de mensajes por conversación (partial)
-- ✅ Enviar mensaje (pendiente)
+- ✅ Enviar mensaje (funcional)
 - ❌ Borrar mensajes / borrar conversación (pendiente)
 
 ## Arquitectura / stack
