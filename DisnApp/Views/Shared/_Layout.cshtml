@@ -32,10 +32,14 @@
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearPublicacionModal">
                             Crear publicación
                         </button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearHistoriaModal">
+                            Crear historia
+                        </button>
                     </ul>
                 </div>
                 <partial name="_LoginPartial"></partial>
                 <partial name="~/Views/Publicacion/_Create.cshtml" model="new DisnApp.ViewModel.CrearPublicacionVM()" />
+                <partial name="~/Views/Historia/_Create.cshtml" model="new DisnApp.ViewModel.CrearHistoriaVM()" />
                 <!-- Modal contenedor (vacío) -->
                 <div class="modal fade" id="PublicacionModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl modal-dialog-centered">
