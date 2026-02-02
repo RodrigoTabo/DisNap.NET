@@ -25,8 +25,8 @@ V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 ### Historias
 
 - ✅ Visualización/listado de historias activas (casi terminado)
-- ✅ Agregar historia (funcional)
-- ✅ Eliminar historia fisico (funcional)
+- ❌ Agregar historia (funcional)
+- ❌ Eliminar historia fisico (funcional)
 
 ### Mensajes
 
@@ -51,12 +51,12 @@ V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 
 ## Roadmap (V2)
 
-- [ ] Historias: agregar y eliminar
-- [ ] Mensajes: POST enviar (ideal: AJAX para refrescar el modal sin recargar)
-- [ ] Mensajes: borrar mensaje / conversación
-- [ ] Validaciones extra (servidor + UI)
-- [ ] Refactor y limpieza de código (nombres, capas, duplicados)
-- [ ] Mejoras de performance (consultas, includes, paginación si aplica)
+- [✅] Historias: agregar y eliminar
+- [✅] Mensajes: POST enviar (ideal: AJAX para refrescar el modal sin recargar)
+- [✅] Mensajes: borrar mensaje / conversación
+- [✅] Validaciones extra (servidor + UI)
+- [✅] Refactor y limpieza de código (nombres, capas, duplicados)
+- [✅] Mejoras de performance (consultas, includes, paginación si aplica)
 
 ## Notas
 
