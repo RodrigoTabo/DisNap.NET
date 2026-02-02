@@ -7,7 +7,7 @@ namespace DisnApp.Services
     {
         Task<Historia> CreateAsync(CrearHistoriaVM vm, string userId);
         Task<Historia> DeleteAsync(int id, string userId);
-        Task<List<Historia>> GetViewerAsync();
+        Task<List<Historia>> GetViewerAsync(string miId);
 
     }
 }

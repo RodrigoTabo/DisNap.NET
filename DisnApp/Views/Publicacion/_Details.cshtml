@@ -84,13 +84,11 @@
             min-height: 0; /* CLAVE */
         }
 
-    /* ✅ 5) Zona de comentarios: se scrollea */
     .comment-scroll {
         overflow-y: auto;
-        min-height: 0; /* CLAVE */
+        min-height: 0;
     }
 
-    /* (Opcional) Asegura que la imagen no deforme y no “empuje” */
     .post-image {
         width: 100%;
         height: 100%;
@@ -125,7 +123,6 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    <a href="#" class="text-primary fw-bold small text-decoration-none">Follow</a>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
@@ -137,7 +134,7 @@
                 {
                     <div class="d-flex mb-4">
                         <img src="~/img/avatar-default.png"
-                             class="rounded-circle avatar-sm me-3 mt-1"
+                             class="rounded-circle avatar-sm me-3 mt-1" s
                              alt="Profile"
                              onerror="this.style.display='none';" />
                         <div>
@@ -164,24 +161,23 @@
                 {
                     <div class="text-muted small">Todavía no hay comentarios.</div>
                 }
-
             </div>
 
             <!-- Interacciones -->
             <div class="p-3 border-top">
                 <div class="d-flex justify-content-between align-items-center mb-2 interaction-icons">
                     <div class="left d-flex align-items-center">
-                        <i class="bi bi-heart"></i>
-                        <i class="bi bi-chat"></i>
-                        <i class="bi bi-send"></i>
+                        <form class="like-form" asp-controller="Publicacion" asp-action="Like" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="button" class="btn-like" data-id="@Model.Id">
+                                <span class="material-symbols-outlined">favorite</span>
+                                <span class="like-count" id="like-count-@Model.Id">@Model.Likes.Count</span>
+                            </button>
+                        </form>
+                        <span class="material-symbols-outlined">chat_bubble</span>
+                        <span class="fw-bold small mb-1">@Model.Comentarios.Count</span>
                     </div>
-                    <i class="bi bi-bookmark"></i>
                 </div>
-
-                <p class="small fw-bold mb-1">
-                    @((Model.Likes?.Count ?? 0).ToString()) likes
-                </p>
-
                 <p class="text-muted small text-uppercase mb-0" style="font-size:10px; letter-spacing:.5px;">
                     @Model.FechaSubida.ToString("MMMM dd")
                 </p>
@@ -192,10 +188,6 @@
                 <form class="d-flex align-items-center gap-1 js-comentario-form" asp-controller="Publicacion" asp-action="Comentar" method="post">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id" value="@Model.Id" />
-                    <button class="btn btn-link text-dark p-2" type="button" aria-label="Emoji">
-                        <i class="bi bi-emoji-smile fs-5"></i>
-                    </button>
-
                     <input class="form-control border-0 no-border-focus small" name="contenido" type="text" placeholder="Add a comment..." />
                     <button class="btn btn-link btn-link-post text-primary small" type="submit">
                         Post

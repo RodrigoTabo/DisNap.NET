@@ -71,4 +71,37 @@ document.addEventListener("submit", async function (e) {
     if (input) input.value = "";
 });
 
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".btn-like");
+    if (!btn) return;
 
+    const id = btn.dataset.id;
+    const form = btn.closest("form.like-form");
+    const token = form.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    try {
+    const res = await fetch(form.action, {
+        method: "POST",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "RequestVerificationToken": token
+      },
+    body: new URLSearchParams({id})
+    });
+
+    if (!res.ok) throw new Error("Error Like");
+
+    const data = await res.json();
+
+    // contador
+    const countEl = document.querySelector(`#like-count-${id}`);
+    if (countEl) countEl.textContent = data.likeCount;
+
+    // estado visual
+    btn.classList.toggle("liked", data.liked);
+
+  } catch (err) {
+        console.error(err);
+    alert("No se pudo procesar el like.");
+  }
+});

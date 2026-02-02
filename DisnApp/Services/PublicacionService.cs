@@ -60,32 +60,38 @@ namespace DisnApp.Services
         }
 
 
-        public async Task<PublicacionLike> ToggleLikeAsync(int id, string userId)
+        public async Task<(bool liked, int likeCount)> ToggleLikeAsync(int id, string userId)
         {
-            var usuarioId = userId;
             var likeExistente = await _context.PublicacionLikes
-                .FirstOrDefaultAsync(l => l.PublicacionId == id && l.UsuarioId == usuarioId);
+                .FirstOrDefaultAsync(l => l.PublicacionId == id && l.UsuarioId == userId);
+
+            bool liked;
 
             if (likeExistente != null)
             {
                 _context.PublicacionLikes.Remove(likeExistente);
-                await _context.SaveChangesAsync();
-                return likeExistente;
+                liked = false;
             }
             else
             {
                 var nuevoLike = new PublicacionLike
                 {
                     PublicacionId = id,
-                    UsuarioId = usuarioId,
-                    FechaLike = DateTime.Now
+                    UsuarioId = userId,
+                    FechaLike = DateTime.UtcNow
                 };
-                await _context.PublicacionLikes.AddAsync(nuevoLike);
-                await _context.SaveChangesAsync();
-                return nuevoLike;
-            }
-        }
 
+                await _context.PublicacionLikes.AddAsync(nuevoLike);
+                liked = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            var likeCount = await _context.PublicacionLikes
+                .CountAsync(l => l.PublicacionId == id);
+
+            return (liked, likeCount);
+        }
 
         public async Task<Comentario> AddCommentAsync(int id, string contenido, string userId)
         {

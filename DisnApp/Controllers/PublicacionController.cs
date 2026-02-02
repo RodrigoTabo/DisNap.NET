@@ -4,6 +4,7 @@ using DisnApp.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
 
 
 namespace DisnApp.Controllers
@@ -86,9 +87,10 @@ namespace DisnApp.Controllers
         {
 
             var userId = _userManager.GetUserId(User);
-            var nuevoLike = await _publicacionService.ToggleLikeAsync(id, userId);
+            var (liked, likeCount) = await _publicacionService.ToggleLikeAsync(id, userId);
 
-            return RedirectToAction("Index", "Home");
+            return Json(new { liked, likeCount });
+
         }
 
         [Authorize]

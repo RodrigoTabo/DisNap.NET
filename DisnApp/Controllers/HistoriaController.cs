@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Security.Claims;
 
 namespace DisnApp.Controllers
 {
@@ -68,11 +69,11 @@ namespace DisnApp.Controllers
         [Authorize]
         public async Task<ActionResult> Viewer()
         {
-            var userId = _userManager.GetUserId(User);
+            var miId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
+            if (string.IsNullOrWhiteSpace(miId)) return Unauthorized();
 
-            var historias = await _historiaService.GetViewerAsync();
+            var historias = await _historiaService.GetViewerAsync(miId);
 
             return View(historias);
 

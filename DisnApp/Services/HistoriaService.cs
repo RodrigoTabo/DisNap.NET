@@ -53,17 +53,25 @@ namespace DisnApp.Services
             return historia;
         }
 
-        public async Task<List<Historia>> GetViewerAsync()
+        public async Task<List<Historia>> GetViewerAsync(string miId)
         {
             var ahora = DateTime.UtcNow;
 
             return await _context.Historias
-            .Include(h => h.UsuarioId)
-            .Where(h => h.FechaExpiracion > ahora)
-            .OrderByDescending(h => h.FechaCreacion)
-            .ToListAsync();
-
-        } 
+                .Include(h => h.Usuario) // OJO: debe ser la navegación, no el Id
+                .Where(h => h.FechaExpiracion > ahora)
+                .Where(h =>
+                    h.UsuarioId == miId ||
+                    _context.SeguidorUsuarios.Any(s =>
+                        s.SeguidorId == miId &&
+                        s.SeguidoId == h.UsuarioId
+                    )
+                )
+                .OrderByDescending(h => h.UsuarioId == miId)
+                .ThenByDescending(h => h.FechaCreacion)
+                .OrderByDescending(h => h.FechaCreacion)
+                .ToListAsync();
+        }
 
 
     }
