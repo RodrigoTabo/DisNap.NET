@@ -9,6 +9,7 @@ namespace DisnApp.Services
         Task<List<Mensaje>> GetChatAsync(int conversacionId, string userId);
         Task<List<Mensaje>> SendMessageAsync(int conversacionId, string userId, string texto);
         Task<List<ConversacionVM>> GetBandejaAsync(string userId);
+        Task<List<ChatCandidateVM>> GetChatStartCandidatesAsync(string miId, string txtBusqueda);
 
     }
 }

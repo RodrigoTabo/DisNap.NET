@@ -2,12 +2,13 @@
 using DisnApp.Models;
 using DisnApp.ViewModel;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Security.Claims;
 
 namespace DisnApp.Services
 {
     public class MensajeService : IMensajeService
     {
-
 
         private readonly RedDbContext _context;
 
@@ -41,7 +42,7 @@ namespace DisnApp.Services
 
             return await _context.Mensajes
                 .Where(m => m.ConversacionId == conversacionId)
-                .OrderBy(m => m.FechaEnvio) // o el campo que uses
+                .OrderBy(m => m.FechaEnvio) 
                 .ToListAsync();
 
 
@@ -89,7 +90,7 @@ namespace DisnApp.Services
         public async Task<List<ConversacionVM>> GetBandejaAsync(string userId)
         {
             return await _context.Conversaciones
-                .Where(c => c.Participantes.Any(p => p.UsuarioId == userId))
+                .Where(c => c.Participantes.Any(p => p.UsuarioId == userId && p.Eliminada == false))
                 .Select(c => new ConversacionVM
                 {
                     ConversacionId = c.Id,
@@ -115,6 +116,38 @@ namespace DisnApp.Services
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<List<ChatCandidateVM>> GetChatStartCandidatesAsync(string miId, string txtBusqueda)
+        {
+
+            // Traigo seguidos (esto hoy te devuelve List<SeguidorUsuario>)
+            var seguidos = await _context.SeguidorUsuarios
+                .Where(s => s.SeguidorId == miId)
+                .Include(s => s.Seguido) // para tener datos del usuario seguido
+                .ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(txtBusqueda))
+            {
+                seguidos = seguidos
+                    .Where(s => s.Seguido.UserName.Contains(txtBusqueda))
+                    .ToList();
+            }
+
+            var candidatos = seguidos.Select(s => new ChatCandidateVM
+            {
+                UsuarioId = s.SeguidoId,
+                Nombre = s.Seguido.UserName,
+
+                // Por ahora dejalo falso y null; luego lo completás con la lógica de conversación
+                TieneConversacion = false,
+                ConversacionId = null
+            }).ToList();
+
+            return candidatos;
+
+
+        }
+
 
     }
 }

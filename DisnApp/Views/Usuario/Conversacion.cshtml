@@ -1,5 +1,10 @@
 ﻿@model List<DisnApp.ViewModel.ConversacionVM>
 
+@{
+    var busqueda = ViewBag.txtBusqueda as string ?? "";
+}
+
+
 <div class="container-fluid p-0 chat-container shadow-sm bg-white">
     <div class="row g-0 chat-shell">
 
@@ -7,22 +12,34 @@
             <!-- Header -->
             <div class="p-3 bg-white border-bottom d-flex align-items-center justify-content-between flex-shrink-0">
                 <h5 class="fw-bold mb-0">Mensajes</h5>
-
-                <button class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center p-2">
-                    <span class="material-symbols-outlined text-white">edit</span>
-                </button>
             </div>
 
             <!-- Search -->
             <div class="p-3 bg-white border-bottom flex-shrink-0">
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-0">
-                        <span class="material-symbols-outlined text-muted">search</span>
-                    </span>
-                    <input class="form-control bg-light border-0 shadow-none" placeholder="Buscar conversacion..." type="text" />
-                </div>
-            </div>
+                <form id="filtroChatsForm"
+                      asp-controller="Mensaje"
+                      asp-action="GetChatStartCandidates"
+                      method="get"
+                      class="d-flex gap-2 align-items-center">
 
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0">
+                            <span class="material-symbols-outlined text-muted">search</span>
+                        </span>
+
+                        <input type="text"
+                               class="form-control bg-light border-0 shadow-none"
+                               name="txtBusqueda"
+                               value="@busqueda"
+                               placeholder="Buscar usuario..."
+                               aria-label="Buscar usuario" />
+
+                        <button type="submit" class="btn btn-primary">
+                            Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
             <!-- List -->
             <div id="bandejaContainer">
                 @await Html.PartialAsync("~/Views/Mensaje/_Bandeja.cshtml", Model)
@@ -45,8 +62,6 @@
                 </div>
             </div>
         </div>
-
-
 
     </div>
 </div>

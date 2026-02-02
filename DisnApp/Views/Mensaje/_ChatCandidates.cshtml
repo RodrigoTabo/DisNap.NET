@@ -1,0 +1,32 @@
+﻿@using DisnApp.ViewModel
+@model List<ChatCandidateVM>
+
+@foreach (var u in Model)
+{
+    <div class="candidate-row">
+        <span>@u.Nombre</span>
+
+        @if (u.TieneConversacion)
+        {
+            <a class="btn btn-sm btn-primary"
+               asp-controller="Mensaje"
+               asp-action="Chat"
+               asp-route-id="@u.ConversacionId">
+                Abrir chat
+            </a>
+        }
+        else
+        {
+            <form asp-controller="Mensaje" asp-action="CreateOrGet" method="post" style="display:inline">
+                <input type="hidden" name="receptorId" value="@u.UsuarioId" />
+                <button type="button"
+                        class="btn btn-sm btn-success js-create-chat"
+                        data-user-id="@u.UsuarioId">
+                    + Crear conversación
+                </button>
+            </form>
+
+        }
+    </div>
+}
+

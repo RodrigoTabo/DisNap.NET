@@ -9,6 +9,8 @@
         public Conversacion Conversacion { get; set; }
 
         public DateTime? UltimaLectura { get; set; }
+        public bool Eliminada { get; set; }
+        public DateTime? EliminadaAt { get; set; }
 
     }
 }
