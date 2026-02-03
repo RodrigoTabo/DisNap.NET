@@ -85,5 +85,25 @@ namespace DisnApp.Controllers
             return View(items);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string busqueda)
+        {
+
+            busqueda ??= "";
+
+            if (busqueda.Length < 2)
+                return PartialView("_UserSearchResults", new List<Usuario>());
+
+            var users = await _userManager.Users
+                .Where(u => u.Email.Contains(busqueda))
+                .OrderBy(u => u.Email)
+                .Take(10)
+                .ToListAsync();
+
+            return PartialView("_UserSearchResults", users);
+
+        }
+
     }
 }

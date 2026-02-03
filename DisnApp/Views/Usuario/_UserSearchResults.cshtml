@@ -1,0 +1,18 @@
+﻿@model List<Usuario>
+
+@if (!Model.Any())
+{
+    <div class="text-muted small p-2">Sin resultados</div>
+}
+else
+{
+    <ul class="list-group list-group-flush">
+        @foreach (var u in Model)
+        {
+            <li class="list-group-item d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined">person</span>
+                <span>@u.UserName</span>
+            </li>
+        }
+    </ul>
+}
