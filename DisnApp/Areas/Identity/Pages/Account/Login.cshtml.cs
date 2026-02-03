@@ -22,11 +22,14 @@ namespace DisnApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<Usuario> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<Usuario> _userManager;
 
-        public LoginModel(SignInManager<Usuario> signInManager, ILogger<LoginModel> logger)
+
+        public LoginModel(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -61,13 +64,6 @@ namespace DisnApp.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -83,6 +79,12 @@ namespace DisnApp.Areas.Identity.Pages.Account
             /// </summary>
             [Display(Name = "Remember me?")]
             public bool RememberMe { get; set; }
+
+            [Required(ErrorMessage = "Ingresá tu usuario o email.")]
+            [Display(Name = "Usuario o email")]
+            public string Login { get; set; } = "";
+
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -108,34 +110,58 @@ namespace DisnApp.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return Page();
+
+            var login = Input.Login?.Trim();
+
+            if (string.IsNullOrWhiteSpace(login))
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
-                }
+                ModelState.AddModelError(string.Empty, "Ingresá tu usuario o email.");
+                return Page();
             }
 
-            // If we got this far, something failed, redisplay form
+            // Resolver user
+            var user = login.Contains("@")
+                ? await _userManager.FindByEmailAsync(login)
+                : await _userManager.FindByNameAsync(login);
+
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Credenciales inválidas.");
+                return Page();
+            }
+
+            // OJO: PasswordSignInAsync funciona mejor con userName
+            var result = await _signInManager.PasswordSignInAsync(
+                user.UserName!,
+                Input.Password,
+                Input.RememberMe,
+                lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("User logged in: {UserId}", user.Id);
+                return LocalRedirect(returnUrl);
+            }
+
+            if (result.RequiresTwoFactor)
+                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+
+            if (result.IsLockedOut)
+                return RedirectToPage("./Lockout");
+
+            if (result.IsNotAllowed)
+            {
+                // Esto suele pasar si tenés RequireConfirmedAccount/Email
+                ModelState.AddModelError(string.Empty, "No tenés permitido iniciar sesión. ¿Falta confirmar el email?");
+                return Page();
+            }
+
+            ModelState.AddModelError(string.Empty, "Credenciales inválidas.");
             return Page();
         }
+
+
     }
 }
