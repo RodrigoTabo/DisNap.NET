@@ -81,9 +81,13 @@ namespace DisnApp.Controllers
         {
 
             var miId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var items = await _mensajeService.GetBandejaAsync(miId);
 
             try
             {
+
+                if (string.IsNullOrWhiteSpace(txtBusqueda)) return PartialView("~/Views/Mensaje/_Bandeja.cshtml", items) ;
+
                 var candidatos = await _mensajeService.GetChatStartCandidatesAsync(miId, txtBusqueda);
                 return PartialView("_ChatCandidates", candidatos);
             }

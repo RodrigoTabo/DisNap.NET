@@ -55,17 +55,22 @@ namespace DisnApp.Controllers
         // POST: UsuarioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Seguir(string id) 
+        public async Task<IActionResult> Seguir(string id)
         {
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            if (userId == id) return RedirectToAction("Details", new { id });
+            var usuarioUserName = await _userManager.FindByIdAsync(id);
+            if (usuarioUserName == null) return NotFound();
+
+
+
+            if (userId == id) return RedirectToAction("Details", new { username = usuarioUserName });
 
             var existente = await _usuarioService.PostSeguirAsync(id, userId);
 
             // Volver al perfil que estabas mirando
-            return RedirectToAction("Details", new { id });
+            return RedirectToAction("Details", new { username = usuarioUserName });
         }
 
 
@@ -77,7 +82,7 @@ namespace DisnApp.Controllers
             var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest"
                          || Request.Query.ContainsKey("partial");
 
-            var items = await _mensajeService.GetBandejaAsync(userId); // ✅ await
+            var items = await _mensajeService.GetBandejaAsync(userId);
 
 
             if (isAjax)

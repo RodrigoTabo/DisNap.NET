@@ -26,15 +26,7 @@
                 <div class="d-flex flex-column flex-md-row align-items-md-center gap-3 mb-4">
                     <h2 class="h4 mb-0 fw-light">@Model.UserName</h2>
 
-                    @if (ViewBag.EsMiPerfil == true)
-                    {
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-link text-dark p-0" type="button" aria-label="Configuración">
-                                <span class="material-symbols-outlined">Setting</span>
-                            </button>
-                        </div>
-                    }
-                    else
+                    @if (!ViewBag.EsMiPerfil == true)
                     {
                         if (ViewBag.YaLoSigo == true)
                         {

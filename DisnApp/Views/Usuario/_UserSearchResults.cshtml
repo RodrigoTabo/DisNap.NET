@@ -10,8 +10,10 @@ else
         @foreach (var u in Model)
         {
             <li class="list-group-item d-flex align-items-center gap-2">
-                <span class="material-symbols-outlined">person</span>
-                <span>@u.UserName</span>
+                <a id="manage" class="nav-link text-dark sidebar-link" asp-area="" asp-controller="Usuario" asp-action="Details" asp-route-username="@u.UserName">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>@u.UserName</span>
+                </a>
             </li>
         }
     </ul>
