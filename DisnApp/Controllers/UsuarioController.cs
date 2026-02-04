@@ -32,15 +32,16 @@ namespace DisnApp.Controllers
             return View();
         }
 
-        // GET: UsuarioController/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string username)
         {
 
             var usuarioId = _userManager.GetUserId(User);
-            var usuario = await _usuarioService.GetDetailsAsync(id);
 
-            if (usuario == null)
-                return NotFound(); // <- clave
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+                return NotFound();
+
+            var usuario = await _usuarioService.GetDetailsAsync(user.Id);
 
             ViewBag.EsMiPerfil = (usuarioId != null && usuarioId == usuario.Id);
 
@@ -54,12 +55,12 @@ namespace DisnApp.Controllers
         // POST: UsuarioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Seguir(string id) // id = perfil a seguir (SeguidoId)
+        public async Task<IActionResult> Seguir(string id) 
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return Challenge(); // no logueado -> login
+            if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            if (userId == id) return RedirectToAction("Details", new { id }); // no te sigas a vos mismo
+            if (userId == id) return RedirectToAction("Details", new { id });
 
             var existente = await _usuarioService.PostSeguirAsync(id, userId);
 

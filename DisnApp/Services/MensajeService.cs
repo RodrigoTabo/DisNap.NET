@@ -40,10 +40,15 @@ namespace DisnApp.Services
                 .SetProperty(m => m.ReadAt, DateTime.UtcNow));
 
 
+
             return await _context.Mensajes
                 .Where(m => m.ConversacionId == conversacionId)
-                .OrderBy(m => m.FechaEnvio) 
+                .Include(m => m.Conversacion)
+                    .ThenInclude(c => c.Participantes)
+                        .ThenInclude(cu => cu.Usuario)
+                .OrderBy(m => m.FechaEnvio)
                 .ToListAsync();
+
 
 
         }
