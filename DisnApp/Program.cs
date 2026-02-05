@@ -2,6 +2,7 @@ using DisnApp.Data;
 using DisnApp.Models;
 using DisnApp.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,9 @@ builder.Services.AddScoped<IHistoriaService, HistoriaService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IPublicacionService, PublicacionService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<ImagenStorage>();
+
+builder.Services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = 2 * 1024 * 1024; });
 
 
 

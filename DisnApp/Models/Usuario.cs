@@ -12,6 +12,7 @@ namespace DisnApp.Models
         public string? Apellido { get; set; }
         [Required]
         public DateTime FechaRegistro { get; set; }
+        public string? ImagenPerfil { get; set; }
 
         public List<Publicacion>? Publicaciones { get; set; } = new();
         public List<Comentario> Comentarios { get; set; } = new();

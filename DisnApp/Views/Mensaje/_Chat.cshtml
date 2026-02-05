@@ -19,14 +19,22 @@
 
 
 
-<div class="d-flex flex-column" style="height: 70vh;">
+<div class="d-flex flex-column border rounded-3 overflow-hidden bg-body shadow-sm"
+     style="height: calc(100vh - 140px);">
 
-    <div class="px-3 py-2 border-bottom bg-white">
+
+    <!-- Header -->
+    <div class="px-3 py-2 border-bottom bg-body">
         <div class="d-flex align-items-center gap-2">
-            <div class="rounded-circle bg-secondary-subtle" style="width:36px;height:36px;"></div>
-            <div class="min-width-0">
+            <img class="rounded-circle flex-shrink-0"
+                 style="width:36px;height:36px; object-fit: cover;"
+                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKfXT6RT6YYfXo9Bwl8DcQfhZ_cjNET89cwNSuQsovkacbuvXGi0jRYs7Fzy91NU3ScQt-C4O7gG7t2Ihp1HJGwqkbZaDNvtBc1afPnEccu0h_Z_hsb2xYfRsqDgeoPgMdOske_TpkNdbbFDg_4X49TcsUuDJWlAI4dHe8nj-C7eSZkhyQMlrHWXTswQXTHstGrpERyIJP1-LVe57aSK2REozLQZ5tx0DRn1Cj0UjT0uKIokbwgZeeFc5oVWqGZzjg8_d76tsqANwe"
+                 alt="avatar" />
+
+            <div class="min-width-0 flex-grow-1">
                 <div class="fw-semibold text-truncate">@otroUsuarioName</div>
             </div>
+
             <button type="button"
                     class="btn btn-sm btn-outline-danger js-delete-chat"
                     data-chat-id="@ViewBag.ConversacionId"
@@ -37,7 +45,7 @@
     </div>
 
     <!-- Mensajes -->
-    <div class="flex-grow-1 overflow-auto p-3 bg-light" id="chatScroll">
+    <div class="flex-grow-1 overflow-auto p-3" id="chatScroll" style="background: var(--bs-tertiary-bg);">
         <div id="chatMessages">
             @if (Model == null || !Model.Any())
             {
@@ -50,7 +58,7 @@
                     var isMine = currentUserId != null && m.EmisorId == currentUserId;
 
                     <div class="d-flex mb-2 @(isMine ? "justify-content-end" : "justify-content-start")">
-                        <div class="px-3 py-2 shadow-sm @(isMine ? "bg-primary text-white" : "bg-white border")"
+                        <div class="px-3 py-2 shadow-sm @(isMine ? "bg-primary text-white" : "bg-body border")"
                              style="max-width: 75%; border-radius: 18px;">
                             <div class="small">@m.Texto</div>
                             <div class="text-end mt-1" style="font-size: 11px; opacity: .75;">
@@ -71,12 +79,18 @@
     </div>
 
     <!-- Input -->
-    <div class="p-3 border-top bg-white">
+    <div class="p-2 border-top bg-body">
         <form class="d-flex gap-2" id="sendMessageForm" method="post" asp-action="Chat" asp-controller="Mensaje">
             @Html.AntiForgeryToken()
             <input type="hidden" name="ConversacionId" value="@ViewBag.ConversacionId" />
-            <input class="form-control" name="texto" placeholder="Escribí un mensaje..." autocomplete="off" />
-            <button class="btn btn-primary" type="submit">Enviar</button>
+
+            <input class="form-control"
+                   name="texto"
+                   placeholder="Escribí un mensaje..."
+                   autocomplete="off" />
+
+            <button class="btn btn-primary px-4" type="submit">Enviar</button>
         </form>
     </div>
 </div>
+

@@ -4,6 +4,7 @@
 @foreach (var u in Model)
 {
     <div class="candidate-row">
+        <img alt="User" class="rounded-circle border" height="32" width="32" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKfXT6RT6YYfXo9Bwl8DcQfhZ_cjNET89cwNSuQsovkacbuvXGi0jRYs7Fzy91NU3ScQt-C4O7gG7t2Ihp1HJGwqkbZaDNvtBc1afPnEccu0h_Z_hsb2xYfRsqDgeoPgMdOske_TpkNdbbFDg_4X49TcsUuDJWlAI4dHe8nj-C7eSZkhyQMlrHWXTswQXTHstGrpERyIJP1-LVe57aSK2REozLQZ5tx0DRn1Cj0UjT0uKIokbwgZeeFc5oVWqGZzjg8_d76tsqANwe" />
         <span>@u.Nombre</span>
 
         @if (u.TieneConversacion)
@@ -22,7 +23,7 @@
                 <button type="button"
                         class="btn btn-sm btn-success js-create-chat"
                         data-user-id="@u.UsuarioId">
-                    + Crear conversación
+                    +
                 </button>
             </form>
 
