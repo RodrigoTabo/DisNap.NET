@@ -43,18 +43,17 @@ V2 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 - Identity (autenticación/usuarios)
 - Bootstrap (UI)
 
-## 🐞 Known issues (V1)
+## 🐞 Known issues (V2)
 
-- Historias: falta completar alta/baja
-- Mensajes: falta envío y eliminación
-- Algunos flujos pueden requerir mejoras de validación y manejo de errores (UI/UX)
+- Mensajes: Reparar bug eliminar mensajes
+- Historias: Historias por seguidores
+- Publicacion: Publicacion por seguidores
 
 ## Roadmap (V3)
 
 - [ ] Historias: Subir imagen desde directorio
 - [ ] Publicacion: Subir imagen desde directorio
 - [ ] Perfil: Subir imagen desde directorio
-- [ ] Mensajes: Reparar bug eliminar mensajes
 - [ ] Refactor y limpieza de código (nombres, capas, duplicados)
 - [ ] Mejoras de performance (consultas, includes, paginación si aplica)
 
