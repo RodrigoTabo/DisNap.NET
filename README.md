@@ -1,10 +1,10 @@
-# DisnApp — Version 1 (MVP)
+# DisnApp — Version 2 (MVP)
 
 DisnApp es una app tipo red social construida en ASP.NET Core (MVC) con foco en back-end, arquitectura en capas y persistencia con Entity Framework.
 
-## ✅ Estado actual (V1)
+## ✅ Estado actual (V2)
 
-V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core implementadas, pero todavía hay features incompletas y bugs conocidos.
+V2 es una versión MVP: la aplicación es usable y tiene funcionalidades core implementadas, pero todavía hay features incompletas y bugs conocidos.
 
 ## Funcionalidades implementadas
 
@@ -25,8 +25,8 @@ V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 ### Historias
 
 - ✅ Visualización/listado de historias activas (casi terminado)
-- ❌ Agregar historia (funcional)
-- ❌ Eliminar historia fisico (funcional)
+- ✅ Agregar historia (funcional)
+- ✅ Eliminar historia fisico (funcional)
 
 ### Mensajes
 
@@ -34,7 +34,7 @@ V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 - ✅ Apertura del chat en modal lateral (Bootstrap)
 - ✅ Carga del historial de mensajes por conversación (partial)
 - ✅ Enviar mensaje (funcional)
-- ❌ Borrar mensajes / borrar conversación (pendiente)
+- ✅ Borrar mensajes / borrar conversación (pendiente)
 
 ## Arquitectura / stack
 
@@ -49,15 +49,15 @@ V1 es una versión MVP: la aplicación es usable y tiene funcionalidades core im
 - Mensajes: falta envío y eliminación
 - Algunos flujos pueden requerir mejoras de validación y manejo de errores (UI/UX)
 
-## Roadmap (V2)
+## Roadmap (V3)
 
-- [✅] Historias: agregar y eliminar
-- [✅] Mensajes: POST enviar (ideal: AJAX para refrescar el modal sin recargar)
-- [✅] Mensajes: borrar mensaje / conversación
-- [✅] Validaciones extra (servidor + UI)
-- [✅] Refactor y limpieza de código (nombres, capas, duplicados)
-- [✅] Mejoras de performance (consultas, includes, paginación si aplica)
+- [ ] Historias: Subir imagen desde directorio
+- [ ] Publicacion: Subir imagen desde directorio
+- [ ] Perfil: Subir imagen desde directorio
+- [ ] Mensajes: Reparar bug eliminar mensajes
+- [ ] Refactor y limpieza de código (nombres, capas, duplicados)
+- [ ] Mejoras de performance (consultas, includes, paginación si aplica)
 
 ## Notas
 
-Esta versión se publica como “MVP funcional”. La versión 2 enfocará en completar features, corregir bugs y mejorar calidad general.
+Esta versión se publica como “MVP funcional”. La versión 3 enfocará en completar features, corregir bugs y mejorar calidad general.
