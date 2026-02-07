@@ -10,10 +10,12 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-end box-shadow sidebar d-flex flex-column vh-100 p-3"
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-end box-shadow sidebar d-none d-md-flex flex-column vh-100 p-3"
              style="position:fixed; top:0; left:0; width:260px; height:100vh; z-index:1020; overflow-y:auto; border-bottom:0;">
+
 
             <div class="container-fluid flex-column align-items-stretch p-0 h-100">
 
@@ -60,19 +62,23 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <button type="button" class="btn btn-primary sidebar-btn" data-bs-toggle="modal" data-bs-target="#crearPublicacionModal">
+                                        <button type="button"
+                                                class="dropdown-item d-flex align-items-center gap-2"
+                                                data-bs-toggle="modal" data-bs-target="#crearPublicacionModal">
                                             <span class="material-symbols-outlined">add_box</span>
-                                            <span class="nav-text">publicación</span>
+                                            <span>publicación</span>
                                         </button>
                                     </li>
                                     <li>
-                                        <button type="button" class="btn btn-primary sidebar-btn" data-bs-toggle="modal" data-bs-target="#crearHistoriaModal">
+                                        <button type="button"
+                                                class="dropdown-item d-flex align-items-center gap-2"
+                                                data-bs-toggle="modal" data-bs-target="#crearHistoriaModal">
                                             <span class="material-symbols-outlined">add_circle</span>
-                                            <span class="nav-text">historia</span>
+                                            <span>historia</span>
                                         </button>
                                     </li>
-
                                 </ul>
+
                             </div>
                         </li>
 
@@ -144,6 +150,64 @@
             </div>
         </footer>
     </div>
+
+    <!-- ===== BOTTOM NAV (solo mobile) ===== -->
+    <nav class="navbar bg-white border-top fixed-bottom d-md-none ig-bottomnav">
+        <div class="container d-flex justify-content-around">
+
+            <a class="btn ig-iconbtn" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Home">
+                <span class="material-symbols-outlined">home</span>
+            </a>
+
+            <button class="btn ig-iconbtn" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#SearchOffcanvas" aria-controls="SearchOffcanvas"
+                    aria-label="Buscar">
+                <span class="material-symbols-outlined">search</span>
+            </button>
+
+            <a class="btn ig-iconbtn" asp-area="" asp-controller="Usuario" asp-action="Conversacion" aria-label="Mensajes">
+                <span class="material-symbols-outlined">chat_bubble</span>
+            </a>
+
+            <button class="btn ig-iconbtn" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#MobileMenu" aria-controls="MobileMenu"
+                    aria-label="Menú">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+        </div>
+    </nav>
+
+    <!-- ===== MOBILE MENU (offcanvas) ===== -->
+    <div class="offcanvas offcanvas-end d-md-none" tabindex="-1" id="MobileMenu" aria-labelledby="MobileMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="MobileMenuLabel">Menú</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+            <div class="d-grid gap-2">
+
+                <button type="button" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#crearPublicacionModal">
+                    <span class="material-symbols-outlined">add_box</span>
+                    <span class="ms-2">Crear publicación</span>
+                </button>
+
+                <button type="button" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#crearHistoriaModal">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    <span class="ms-2">Crear historia</span>
+                </button>
+
+                <hr class="my-3" />
+
+                <partial name="_LoginPartial"></partial>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 
 

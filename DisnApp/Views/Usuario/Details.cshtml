@@ -62,18 +62,20 @@
         <!-- Mobile stats -->
         <section class="d-md-none row border-top py-3 text-center" aria-label="Estadísticas del perfil">
             <div class="col-4">
-                <div class="fw-bold">120</div>
+                <div class="fw-bold">@Model.Publicaciones.Count</div>
                 <div class="text-muted small">publicaciones</div>
             </div>
             <div class="col-4">
-                <div class="fw-bold">4.5K</div>
+                <div class="fw-bold">@Model.Seguidores.Count</div>
                 <div class="text-muted small">seguidores</div>
             </div>
             <div class="col-4">
-                <div class="fw-bold">342</div>
+                <div class="fw-bold">@Model.Siguiendo.Count</div>
                 <div class="text-muted small">siguiendo</div>
             </div>
         </section>
+
+
 
         <!-- Tabs -->
         <ul class="nav nav-tabs justify-content-center border-0 border-top" id="profileTabs" role="tablist">
@@ -125,19 +127,6 @@
     </div>
 </main>
 
-
-@* <!--- Script obligatorio de JS  ---->
-<script>
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('profileImage').src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-</script> *@
 <!-- Opcional: mové esto a tu CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
